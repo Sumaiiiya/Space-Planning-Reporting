@@ -7,8 +7,10 @@ import { ReportFilters } from "@/components/report-filters"
 import { DataTable } from "@/components/data-table"
 import { downloadCSV, downloadExcel } from "@/lib/export-utils"
 
-// Sample data structure based on PRD
+// First, let's update the data interface to include the new fields
 interface PointInTimeData {
+  storeId: string
+  countryCode: string
   fixtureBarcode: string
   fixtureKey: string
   fixtureCount: number
@@ -22,17 +24,20 @@ interface PointInTimeData {
   shade: string
   style: string
   vpn: string
-  linearMeters: number
+  lm: number // Changed from linearMeters to lm
   zone: string
   name: string
   componentLength: number
   componentHeight: number
   fixtureLinearMeter: number
-  createdBy: string
+  createdAt: string // Changed from createdBy to separate createdAt and user
+  user: string
 }
 
-// Sample data
+// Update the sample data to include the new fields
 const sampleData: PointInTimeData[] = Array.from({ length: 20 }).map((_, i) => ({
+  storeId: `ST${100 + i}`,
+  countryCode: ["US", "UK", "CA", "DE", "FR"][i % 5],
   fixtureBarcode: `FB${1000 + i}`,
   fixtureKey: `FK${2000 + i}`,
   fixtureCount: Math.floor(Math.random() * 10) + 1,
@@ -46,17 +51,26 @@ const sampleData: PointInTimeData[] = Array.from({ length: 20 }).map((_, i) => (
   shade: ["Light", "Medium", "Dark"][i % 3],
   style: `Style ${i % 10}`,
   vpn: `VPN${10000 + i}`,
-  linearMeters: Number.parseFloat((Math.random() * 5 + 1).toFixed(2)),
+  lm: Number.parseFloat((Math.random() * 5 + 1).toFixed(2)),
   zone: `Zone ${Math.floor(i / 4) + 1}`,
   name: `Fixture Name ${i}`,
   componentLength: Number.parseFloat((Math.random() * 2 + 0.5).toFixed(2)),
   componentHeight: Number.parseFloat((Math.random() * 3 + 1).toFixed(2)),
   fixtureLinearMeter: Number.parseFloat((Math.random() * 10 + 2).toFixed(2)),
-  createdBy: `User ${i % 5} (${new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000).toLocaleDateString()})`,
+  createdAt: new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000).toLocaleString(),
+  user: `User ${i % 5}`,
 }))
 
-// Define columns for the data table
+// Update the columns definition with the new headers
 const columns: ColumnDef<PointInTimeData>[] = [
+  {
+    accessorKey: "storeId",
+    header: "Store ID",
+  },
+  {
+    accessorKey: "countryCode",
+    header: "Country Code",
+  },
   {
     accessorKey: "fixtureBarcode",
     header: "Fixture Barcode",
@@ -82,6 +96,38 @@ const columns: ColumnDef<PointInTimeData>[] = [
     header: "Department",
   },
   {
+    accessorKey: "class",
+    header: "Class",
+  },
+  {
+    accessorKey: "subclass",
+    header: "Sub Class",
+  },
+  {
+    accessorKey: "brand",
+    header: "Brand",
+  },
+  {
+    accessorKey: "color",
+    header: "Color",
+  },
+  {
+    accessorKey: "shade",
+    header: "Shade",
+  },
+  {
+    accessorKey: "style",
+    header: "Style",
+  },
+  {
+    accessorKey: "vpn",
+    header: "VPN",
+  },
+  {
+    accessorKey: "lm",
+    header: "LM",
+  },
+  {
     accessorKey: "zone",
     header: "Zone",
   },
@@ -90,12 +136,24 @@ const columns: ColumnDef<PointInTimeData>[] = [
     header: "Name",
   },
   {
-    accessorKey: "linearMeters",
-    header: "Linear Meters",
+    accessorKey: "componentLength",
+    header: "Component Length",
   },
   {
-    accessorKey: "createdBy",
-    header: "Created By",
+    accessorKey: "componentHeight",
+    header: "Component Height",
+  },
+  {
+    accessorKey: "fixtureLinearMeter",
+    header: "Fixture Linear Meter",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+  },
+  {
+    accessorKey: "user",
+    header: "User",
   },
 ]
 

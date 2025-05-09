@@ -92,3 +92,57 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Calendar alignment fixes */
+.rdp-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.rdp-head_row {
+  display: flex;
+  width: 100%;
+}
+
+.rdp-head_cell {
+  flex: 1;
+  text-align: center;
+  font-weight: 500;
+}
+
+.rdp-row {
+  display: flex;
+  width: 100%;
+}
+
+.rdp-cell {
+  flex: 1;
+  text-align: center;
+  padding: 0;
+}
+
+.rdp-day {
+  margin: auto;
+  width: 40px;
+  max-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rdp-months {
+  display: flex;
+}
+
+.rdp-month {
+  flex: 1;
+}
+
+.rdp-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  position: relative;
+}

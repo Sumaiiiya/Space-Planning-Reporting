@@ -7,68 +7,147 @@ import { ReportFilters } from "@/components/report-filters"
 import { DataTable } from "@/components/data-table"
 import { downloadCSV, downloadExcel } from "@/lib/export-utils"
 
-// Sample data structure based on PRD
+// Updated data structure based on new column headers
 interface HistoricalData {
-  fixtureBarcode: string
+  storeId: string
+  countryCode: string
   fixtureKey: string
-  zone: string
-  store: string
-  isCurrent: boolean
-  lastMeasured: string
-  createdBy: string
-  linearMeters: number
+  fixtureCount: number
+  item: string
+  group: string
   department: string
-  brand: string
+  class: string
+  subClass: string
+  lm: number
+  zone: string
+  type: string
+  componentLength: number
+  componentHeight: number
+  fixtureLinearMeter: number
+  validFrom: string
+  validTo: string
+  status: boolean
+  user: string
 }
 
-// Sample data
-const sampleData: HistoricalData[] = Array.from({ length: 20 }).map((_, i) => ({
-  fixtureBarcode: `FB${1000 + i}`,
-  fixtureKey: `FK${2000 + i}`,
-  zone: `Zone ${Math.floor(i / 4) + 1}`,
-  store: `Store ${String.fromCharCode(65 + (i % 4))}`,
-  isCurrent: Math.random() > 0.3,
-  lastMeasured: new Date(Date.now() - Math.floor(Math.random() * 30) * 86400000).toLocaleDateString(),
-  createdBy: `User ${i % 5} (${new Date(Date.now() - Math.floor(Math.random() * 90) * 86400000).toLocaleDateString()})`,
-  linearMeters: Number.parseFloat((Math.random() * 5 + 1).toFixed(2)),
-  department: `Dept ${Math.floor(i / 10) + 1}`,
-  brand: `Brand ${Math.floor(i / 4) + 1}`,
-}))
+// Sample data with the updated fields
+const sampleData: HistoricalData[] = Array.from({ length: 20 }).map((_, i) => {
+  // Generate a random date in the past for validFrom
+  const validFromDate = new Date(Date.now() - Math.floor(Math.random() * 365) * 86400000)
 
-// Define columns for the data table
+  // For some records, set validTo to null (still active) or a date after validFrom
+  const isActive = Math.random() > 0.3
+  const validToDate = isActive ? null : new Date(validFromDate.getTime() + Math.floor(Math.random() * 180) * 86400000)
+
+  return {
+    storeId: `ST${100 + i}`,
+    countryCode: ["US", "UK", "CA", "DE", "FR"][i % 5],
+    fixtureKey: `FK${2000 + i}`,
+    fixtureCount: Math.floor(Math.random() * 10) + 1,
+    item: `Item ${i}`,
+    group: `Group ${Math.floor(i / 5) + 1}`,
+    department: `Dept ${Math.floor(i / 10) + 1}`,
+    class: `Class ${Math.floor(i / 7) + 1}`,
+    subClass: `Subclass ${Math.floor(i / 3) + 1}`,
+    lm: Number.parseFloat((Math.random() * 5 + 1).toFixed(2)),
+    zone: `Zone ${Math.floor(i / 4) + 1}`,
+    type: ["Standard", "Promotional", "Seasonal", "Clearance"][i % 4],
+    componentLength: Number.parseFloat((Math.random() * 2 + 0.5).toFixed(2)),
+    componentHeight: Number.parseFloat((Math.random() * 3 + 1).toFixed(2)),
+    fixtureLinearMeter: Number.parseFloat((Math.random() * 10 + 2).toFixed(2)),
+    validFrom: validFromDate.toISOString().split("T")[0],
+    validTo: validToDate ? validToDate.toISOString().split("T")[0] : "",
+    status: isActive,
+    user: `User ${i % 5}`,
+  }
+})
+
+// Updated columns definition with the new headers
 const columns: ColumnDef<HistoricalData>[] = [
   {
-    accessorKey: "fixtureBarcode",
-    header: "Fixture Barcode",
+    accessorKey: "storeId",
+    header: "Store ID",
+  },
+  {
+    accessorKey: "countryCode",
+    header: "Country Code",
   },
   {
     accessorKey: "fixtureKey",
     header: "Fixture Key",
   },
   {
+    accessorKey: "fixtureCount",
+    header: "Fixture Count",
+  },
+  {
+    accessorKey: "item",
+    header: "Item",
+  },
+  {
+    accessorKey: "group",
+    header: "Group",
+  },
+  {
+    accessorKey: "department",
+    header: "Department",
+  },
+  {
+    accessorKey: "class",
+    header: "Class",
+  },
+  {
+    accessorKey: "subClass",
+    header: "Sub Class",
+  },
+  {
+    accessorKey: "lm",
+    header: "LM",
+  },
+  {
     accessorKey: "zone",
     header: "Zone",
   },
   {
-    accessorKey: "store",
-    header: "Store",
+    accessorKey: "type",
+    header: "Type",
   },
   {
-    accessorKey: "isCurrent",
-    header: "Is Current",
+    accessorKey: "componentLength",
+    header: "Component Length",
+  },
+  {
+    accessorKey: "componentHeight",
+    header: "Component Height",
+  },
+  {
+    accessorKey: "fixtureLinearMeter",
+    header: "Fixture Linear Meter",
+  },
+  {
+    accessorKey: "validFrom",
+    header: "Valid From",
+  },
+  {
+    accessorKey: "validTo",
+    header: "Valid To",
+    cell: ({ row }) => {
+      const validTo = row.getValue("validTo") as string
+      return validTo ? validTo : "Present"
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => (
-      <div className={row.getValue("isCurrent") ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-        {row.getValue("isCurrent") ? "TRUE" : "FALSE"}
+      <div className={row.getValue("status") ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+        {row.getValue("status") ? "TRUE" : "FALSE"}
       </div>
     ),
   },
   {
-    accessorKey: "lastMeasured",
-    header: "Last Measured",
-  },
-  {
-    accessorKey: "createdBy",
-    header: "Created By",
+    accessorKey: "user",
+    header: "User",
   },
 ]
 
