@@ -9,19 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { DateRange } from "react-day-picker"
 
-interface ReportFiltersProps {
-  showDateRange?: boolean
-  showSingleDate?: boolean
-  onFilterChange: (filters: any) => void
-}
-
-export function ReportFilters({ showDateRange = false, showSingleDate = false, onFilterChange }: ReportFiltersProps) {
-  const [date, setDate] = useState<Date>()
-  const [dateRange, setDateRange] = useState<DateRange | undefined>()
-  const [concept, setConcept] = useState<string>("")
-  const [store, setStore] = useState<string>("")
+export function ReportFilters({ showDateRange = false, showSingleDate = false, onFilterChange }) {
+  const [date, setDate] = useState()
+  const [dateRange, setDateRange] = useState()
+  const [concept, setConcept] = useState("")
+  const [store, setStore] = useState("")
 
   const handleFilterApply = () => {
     onFilterChange({

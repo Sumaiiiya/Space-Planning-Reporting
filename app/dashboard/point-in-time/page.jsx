@@ -1,41 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import type { ColumnDef } from "@tanstack/react-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ReportFilters } from "@/components/report-filters"
 import { DataTable } from "@/components/data-table"
 import { downloadCSV, downloadExcel } from "@/lib/export-utils"
 
-// First, let's update the data interface to include the new fields
-interface PointInTimeData {
-  storeId: string
-  countryCode: string
-  fixtureBarcode: string
-  fixtureKey: string
-  fixtureCount: number
-  item: string
-  group: string
-  department: string
-  class: string
-  subclass: string
-  brand: string
-  color: string
-  shade: string
-  style: string
-  vpn: string
-  lm: number // Changed from linearMeters to lm
-  zone: string
-  name: string
-  componentLength: number
-  componentHeight: number
-  fixtureLinearMeter: number
-  createdAt: string // Changed from createdBy to separate createdAt and user
-  user: string
-}
-
-// Update the sample data to include the new fields
-const sampleData: PointInTimeData[] = Array.from({ length: 20 }).map((_, i) => ({
+// Sample data
+const sampleData = Array.from({ length: 20 }).map((_, i) => ({
   storeId: `ST${100 + i}`,
   countryCode: ["US", "UK", "CA", "DE", "FR"][i % 5],
   fixtureBarcode: `FB${1000 + i}`,
@@ -61,8 +33,8 @@ const sampleData: PointInTimeData[] = Array.from({ length: 20 }).map((_, i) => (
   user: `User ${i % 5}`,
 }))
 
-// Update the columns definition with the new headers
-const columns: ColumnDef<PointInTimeData>[] = [
+// Define columns for the data table
+const columns = [
   {
     accessorKey: "storeId",
     header: "Store ID",
@@ -158,16 +130,16 @@ const columns: ColumnDef<PointInTimeData>[] = [
 ]
 
 export default function PointInTimePage() {
-  const [filteredData, setFilteredData] = useState<PointInTimeData[]>(sampleData)
+  const [filteredData, setFilteredData] = useState(sampleData)
 
-  const handleFilterChange = (filters: any) => {
+  const handleFilterChange = (filters) => {
     // In a real app, this would call an API with the filters
     console.log("Filters applied:", filters)
     // For demo, we'll just use the sample data
     setFilteredData(sampleData)
   }
 
-  const handleDownload = (format: "csv" | "excel") => {
+  const handleDownload = (format) => {
     const filename = `PointInTimeReport_${new Date().toISOString().split("T")[0]}`
 
     if (format === "csv") {

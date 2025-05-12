@@ -2,14 +2,11 @@
 
 import { useState } from "react"
 import {
-  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-  type SortingState,
   getSortedRowModel,
-  type ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table"
 
@@ -18,16 +15,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DownloadIcon } from "lucide-react"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchColumn?: string
-  onDownload?: (format: "csv" | "excel") => void
-}
-
-export function DataTable<TData, TValue>({ columns, data, searchColumn, onDownload }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+export function DataTable({ columns, data, searchColumn, onDownload }) {
+  const [sorting, setSorting] = useState([])
+  const [columnFilters, setColumnFilters] = useState([])
 
   const table = useReactTable({
     data,
@@ -51,7 +41,7 @@ export function DataTable<TData, TValue>({ columns, data, searchColumn, onDownlo
           <div className="flex items-center">
             <Input
               placeholder="Search..."
-              value={(table.getColumn(searchColumn)?.getFilterValue() as string) ?? ""}
+              value={table.getColumn(searchColumn)?.getFilterValue() ?? ""}
               onChange={(event) => table.getColumn(searchColumn)?.setFilterValue(event.target.value)}
               className="max-w-sm"
             />

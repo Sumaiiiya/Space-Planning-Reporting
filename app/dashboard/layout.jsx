@@ -1,11 +1,6 @@
-import type React from "react"
 import { Sidebar } from "@/components/sidebar"
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }) {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
