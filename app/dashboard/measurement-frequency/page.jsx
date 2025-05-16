@@ -1,26 +1,20 @@
 "use client"
 
 import { useState } from "react"
-import type { ColumnDef } from "@tanstack/react-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ReportFilters } from "@/components/report-filters"
 import { DataTable } from "@/components/data-table"
 import { downloadCSV, downloadExcel } from "@/lib/export-utils"
 
-// Sample data structure based on PRD
-interface FrequencyData {
-  storeName: string
-  totalZones: number
-  totalFixtureKeys: number
-  zonesMeasuredLast15Days: number
-  percentageFixturesMeasuredLast30Days: number
-  percentageZonesMeasuredLast30Days: number
-  averageRefreshInMonth: number
-}
-
-// Sample data
-const sampleData: FrequencyData[] = Array.from({ length: 10 }).map((_, i) => ({
+// Sample data with the new fields
+const sampleData = Array.from({ length: 10 }).map((_, i) => ({
   storeName: `Store ${String.fromCharCode(65 + i)}`,
+  // New fields
+  group: `Group ${Math.floor(i / 3) + 1}`,
+  department: `Department ${Math.floor(i / 2) + 1}`,
+  class: `Class ${Math.floor(i / 4) + 1}`,
+  subclass: `Subclass ${(i % 3) + 1}`,
+  // Existing fields
   totalZones: Math.floor(Math.random() * 20) + 10,
   totalFixtureKeys: Math.floor(Math.random() * 100) + 50,
   zonesMeasuredLast15Days: Math.floor(Math.random() * 15) + 5,
@@ -29,12 +23,37 @@ const sampleData: FrequencyData[] = Array.from({ length: 10 }).map((_, i) => ({
   averageRefreshInMonth: Number.parseFloat((Math.random() * 5 + 1).toFixed(1)),
 }))
 
-// Define columns for the data table
-const columns: ColumnDef<FrequencyData>[] = [
+// Helper function to determine color based on percentage
+function getColorClass(percentage) {
+  if (percentage >= 80) return "text-green-600 font-medium"
+  if (percentage >= 50) return "text-amber-600 font-medium"
+  return "text-red-600 font-medium"
+}
+
+// Define columns for the data table with the new columns
+const columns = [
   {
     accessorKey: "storeName",
     header: "Store Name",
   },
+  // New columns
+  {
+    accessorKey: "group",
+    header: "Group",
+  },
+  {
+    accessorKey: "department",
+    header: "Department",
+  },
+  {
+    accessorKey: "class",
+    header: "Class",
+  },
+  {
+    accessorKey: "subclass",
+    header: "Subclass",
+  },
+  // Existing columns
   {
     accessorKey: "totalZones",
     header: "Total Zones",
@@ -71,24 +90,17 @@ const columns: ColumnDef<FrequencyData>[] = [
   },
 ]
 
-// Helper function to determine color based on percentage
-function getColorClass(percentage: number): string {
-  if (percentage >= 80) return "text-green-600 font-medium"
-  if (percentage >= 50) return "text-amber-600 font-medium"
-  return "text-red-600 font-medium"
-}
-
 export default function MeasurementFrequencyPage() {
-  const [filteredData, setFilteredData] = useState<FrequencyData[]>(sampleData)
+  const [filteredData, setFilteredData] = useState(sampleData)
 
-  const handleFilterChange = (filters: any) => {
+  const handleFilterChange = (filters) => {
     // In a real app, this would call an API with the filters
     console.log("Filters applied:", filters)
     // For demo, we'll just use the sample data
     setFilteredData(sampleData)
   }
 
-  const handleDownload = (format: "csv" | "excel") => {
+  const handleDownload = (format) => {
     const filename = `MeasurementFrequencyReport_${new Date().toISOString().split("T")[0]}`
 
     if (format === "csv") {

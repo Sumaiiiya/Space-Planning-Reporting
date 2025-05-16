@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Overview } from "@/components/overview"
 import { RecentActivity } from "@/components/recent-activity"
+import { SpaceDepartmentChart } from "@/components/space-department-chart"
 
 export default function DashboardPage() {
   return (
@@ -49,6 +50,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add the new Space and Department chart */}
+      <div className="grid gap-4 md:grid-cols-7">
+        <SpaceDepartmentChart />
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
